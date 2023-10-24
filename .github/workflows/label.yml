@@ -1,0 +1,37 @@
+# This workflow will triage pull requests and apply a label based on the
+# paths that are modified in the pull request.
+#
+# To use this workflow, you will need to set up a .github/labeler.yml
+# file with configuration.  For more information, see:
+# https://github.com/actions/labeler
+
+name: Labeler
+
+on:
+  pull_request:
+    branches:
+      - main
+      - 'release/*'
+  schedule:
+    - cron: '0 2 * * 1-5'
+
+jobs:
+  my_job:
+    name: deploy to staging
+    runs-on: ubuntu-18.04
+
+    steps:
+    - name: Conditional Run
+      if: github.event_name == 'push'
+      run: npm publish
+
+    - name: Setup Node
+      uses: actions/setup-node@v2
+      with:
+        node-version: '10.x'
+
+    - name: Install Dependencies
+      run: npm install
+      env:
+        NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
